@@ -104,14 +104,91 @@ body {
     color: var(--color-primary);
 }
 
-/* ... (resto de tus estilos para .book-list, .book, etc.) ... */
-.book-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 30px; padding: 30px 0; }
-.book { background-color: white; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; }
-.book:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); }
-.book img { width: 100%; height: 250px; object-fit: cover; max-width: 100%; border-radius: 4px; margin-bottom: 15px; }
-.book h3 { margin: 10px 0 5px; color: #333; font-size: 1.1em; }
-.book p { margin: 0 0 5px; font-size: 0.85em; color: #777; }
-.book p:last-of-type { margin-bottom: 15px; flex-grow: 1; }
-.add-to-cart-btn { background-color: var(--color-primary); color: white; border: none; padding: 10px 15px; text-align: center; text-decoration: none; font-weight: 600; display: block; font-size: 0.9em; cursor: pointer; border-radius: 5px; width: 100%; box-sizing: border-box; transition: background-color 0.2s ease, transform 0.1s; margin-top: auto; }
-.add-to-cart-btn:hover { background-color: var(--color-button-hover); }
-.footer { background-color: #333; color: #ddd; text-align: center; padding: 15px; margin-top: 40px; }
+/* ================================================= */
+/* --- ESTILOS PARA LA LISTA DE LIBROS --- */
+/* ================================================= */
+.book-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    padding: 30px 0;
+}
+
+.book {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.book:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.book img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    max-width: 100%;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.book h3 {
+    margin: 10px 0 5px;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.book p {
+    margin: 0 0 5px;
+    font-size: 0.85em;
+    color: #777;
+}
+.book p:last-of-type {
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+.add-to-cart-btn {
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    display: block;
+    font-size: 0.9em;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: background-color 0.2s ease, transform 0.1s;
+    margin-top: auto;
+}
+
+.add-to-cart-btn:hover {
+    background-color: var(--color-button-hover);
+}
+
+/* ================================================= */
+/* --- FOOTER --- */
+/* ================================================= */
+.footer {
+    background-color: #333;
+    color: #ddd;
+    text-align: center;
+    padding: 15px;
+    margin-top: 40px;
+}
+
+/* Estilos adicionales para páginas de usuario y contacto */
+.bg-custom-dark {
+    background-color: #343a40;
+}
