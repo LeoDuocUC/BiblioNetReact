@@ -1,14 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext'; // 1. Importamos el AuthProvider
+import { AuthProvider } from './context/AuthContext';
 
-// Importamos los componentes del layout
+// Importamos los componentes del layout y de protección
 import Header from './components/Header';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute'; // Importamos la ruta protegida
 
-// Importamos todas las páginas
+// Importamos todas las páginas de la aplicación
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage'; // 2. Importamos la nueva página de Login
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage'; // Importamos la página del panel de usuario
 import FiccionPage from './pages/FiccionPage';
 import NoFiccionPage from './pages/NoFiccionPage';
 import CienciaPage from './pages/CienciaPage';
@@ -18,8 +20,8 @@ import InfantilJuvenilPage from './pages/InfantilJuvenilPage';
 
 function App() {
   return (
-    // 3. Envolvemos toda la aplicación con AuthProvider.
-    //    Esto hace que el contexto (user, login, logout) esté disponible en todas partes.
+    // Envolvemos toda la aplicación en el AuthProvider para que el estado de login
+    // esté disponible en todas partes.
     <AuthProvider>
       <Router>
         <div className="App">
@@ -27,9 +29,9 @@ function App() {
           <Navbar />
           
           <Routes>
-            {/* Rutas Públicas */}
+            {/* Rutas Públicas (accesibles para todos) */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<LoginPage />} /> {/* 4. Añadimos la ruta para /login */}
+            <Route path="/login" element={<LoginPage />} />
             
             {/* Rutas de Categorías */}
             <Route path="/ficcion" element={<FiccionPage />} />
@@ -39,8 +41,19 @@ function App() {
             <Route path="/negocios-economia" element={<NegociosEconomiaPage />} />
             <Route path="/infantil-juvenil" element={<InfantilJuvenilPage />} />
             
-            {/* Próximamente añadiremos la ruta para el panel de usuario: */}
-            {/* <Route path="/dashboard" element={<DashboardPage />} /> */}
+            {/* Ruta Protegida
+              - El componente `DashboardPage` está envuelto en `ProtectedRoute`.
+              - Si el usuario no ha iniciado sesión, `ProtectedRoute` lo redirigirá a /login.
+              - Si ha iniciado sesión, mostrará el `DashboardPage`.
+            */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </div>
       </Router>

@@ -1,4 +1,4 @@
-//En una aplicación real, estos datos vendrían de una API o una base de datos externa.
+// En una aplicación real, estos datos vendrían de una API o base de datos.
 export const libros = [
   // Ficción
   {
@@ -15,7 +15,8 @@ export const libros = [
     autor: 'George Orwell',
     genero: 'Distopía',
     categoria: 'ficcion',
-    imagenUrl: '/imagen/1984.webp'
+    // Corregido: Usamos el nombre de archivo que sí existe
+    imagenUrl: '/imagen/Diapositiva1-34-e1593899389735.jpg' 
   },
   // No Ficción
   {
@@ -23,16 +24,18 @@ export const libros = [
     titulo: 'Sapiens: De animales a dioses',
     autor: 'Yuval Noah Harari',
     genero: 'Historia, Antropología',
+    // Corregido: No teníamos esta imagen, usamos una de las existentes como ejemplo
     categoria: 'no-ficcion',
-    imagenUrl: '/imagen/sapiens.webp'
+    imagenUrl: '/imagen/8571a0be08f051d5befeb4676fcf15f9.webp' 
   },
   {
     id: 4,
     titulo: 'El diario de Ana Frank',
     autor: 'Ana Frank',
     genero: 'Biografía, Historia',
+    // Corregido: No teníamos esta imagen, usamos una de las existentes como ejemplo
     categoria: 'no-ficcion',
-    imagenUrl: '/imagen/diario-ana-frank.webp'
+    imagenUrl: '/imagen/978848365337.gif'
   },
   // Ciencia y Tecnología
   {
@@ -40,16 +43,18 @@ export const libros = [
     titulo: 'Cosmos',
     autor: 'Carl Sagan',
     genero: 'Astronomía, Ciencia',
+    // Corregido: No teníamos esta imagen, usamos una de las existentes como ejemplo
     categoria: 'ciencia-tecnologia',
-    imagenUrl: '/imagen/cosmos.webp'
+    imagenUrl: '/imagen/661a3760157941a94cb8db3f5a9d5060.webp'
   },
   {
     id: 6,
     titulo: 'Clean Code',
     autor: 'Robert C. Martin',
     genero: 'Informática, Programación',
+    // Corregido: No teníamos esta imagen, usamos una de las existentes como ejemplo
     categoria: 'ciencia-tecnologia',
-    imagenUrl: '/imagen/clean-code.webp'
+    imagenUrl: '/imagen/aabc3a10f47e5d37cde9f3bc9bdf2667.webp'
   },
   // Infantil y Juvenil
   {
@@ -66,6 +71,7 @@ export const libros = [
     autor: 'Roald Dahl',
     genero: 'Infantil, Humor',
     categoria: 'infantil-juvenil',
-    imagenUrl: '/imagen/matilda.webp'
+    imagenUrl: '/imagen/978842041710.gif'
   },
 ];
+
