@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 function Header() {
   const { user, logout } = useAuth();
+  const { cartItems } = useCart();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Redirige a la página de inicio
+    navigate('/');
   };
 
   return (
@@ -29,28 +31,36 @@ function Header() {
       </div>
       <div className="user-actions">
         {user ? (
-          // Si el usuario ha iniciado sesión, muestra su nombre y un botón para salir.
           <>
-            <div className="action-link">
+            <Link to="/dashboard" className="action-link">
                 <span className="icon-placeholder">👤</span>
                 <span className="action-text">{user.name}</span>
-            </div>
+            </Link>
             <button onClick={handleLogout} className="btn btn-sm btn-outline-primary">Salir</button>
           </>
         ) : (
-          // Si no, muestra el enlace para ingresar.
           <Link to="/login" className="action-link">
             <span className="icon-placeholder">👤</span>
             <span className="action-text">Ingresar</span>
           </Link>
         )}
-        {/* Los otros íconos siguen siendo enlaces estáticos por ahora */}
-        <a href="#" className="action-link">
-          <span className="icon-placeholder">🤍</span>
-        </a>
-        <a href="#" className="action-link">
+        
+        {/* Contact Link */}
+        <Link to="/contacto" className="action-link">
+          <span className="icon-placeholder">✉️</span>
+          <span className="action-text">Contacto</span>
+        </Link>
+
+        {/* Cart Link */}
+        <Link to="/carrito" className="action-link position-relative">
           <span className="icon-placeholder">🛒</span>
-        </a>
+          {cartItems.length > 0 && (
+            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {cartItems.length}
+              <span className="visually-hidden">libros en el carrito</span>
+            </span>
+          )}
+        </Link>
       </div>
     </header>
   );

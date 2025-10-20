@@ -1,16 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import { CartProvider } from './context/CartContext'; // Importamos el proveedor del carrito
+import { CartProvider } from './context/CartContext';
 
-// Importamos todos los componentes y páginas
+// Components
 import Header from './components/Header';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+
+// Pages
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
-import CartPage from './pages/CartPage'; // Importamos la página del carrito
+import CartPage from './pages/CartPage';
+import ContactPage from './pages/ContactPage'; // 1. Import the new page
 import FiccionPage from './pages/FiccionPage';
 import NoFiccionPage from './pages/NoFiccionPage';
 import CienciaPage from './pages/CienciaPage';
@@ -21,7 +24,6 @@ import InfantilJuvenilPage from './pages/InfantilJuvenilPage';
 function App() {
   return (
     <AuthProvider>
-      {/* Envolvemos la aplicación también con CartProvider */}
       <CartProvider>
         <Router>
           <div className="App">
@@ -29,12 +31,13 @@ function App() {
             <Navbar />
             
             <Routes>
-              {/* Rutas Públicas */}
+              {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/carrito" element={<CartPage />} /> {/* Añadimos la ruta del carrito */}
+              <Route path="/carrito" element={<CartPage />} />
+              <Route path="/contacto" element={<ContactPage />} /> {/* 2. Add the route */}
               
-              {/* Rutas de Categorías */}
+              {/* Category Routes */}
               <Route path="/ficcion" element={<FiccionPage />} />
               <Route path="/no-ficcion" element={<NoFiccionPage />} />
               <Route path="/ciencia-tecnologia" element={<CienciaPage />} />
@@ -42,7 +45,7 @@ function App() {
               <Route path="/negocios-economia" element={<NegociosEconomiaPage />} />
               <Route path="/infantil-juvenil" element={<InfantilJuvenilPage />} />
               
-              {/* Ruta Protegida */}
+              {/* Protected Route */}
               <Route 
                 path="/dashboard" 
                 element={
