@@ -3,21 +3,18 @@ import { libros } from '../data/libros';
 import LibroCard from '../components/LibroCard';
 
 function ArteCulturaPage() {
-  // Filtramos para obtener solo los libros de esta categoría
+  // 1. Filtramos la lista de libros para obtener solo los de la categoría "arte-cultura".
   const librosDeArte = libros.filter(libro => libro.categoria === 'arte-cultura');
 
   return (
     <main className="container">
-      <h2>Categoría: Arte y Cultura</h2>
+      <h2 className="mb-4">Categoría: Arte y Cultura</h2>
       <section className="book-list">
+        {/* 2. Mapeamos la lista filtrada para crear una tarjeta por cada libro. */}
         {librosDeArte.map(libro => (
-          <LibroCard
-            key={libro.id}
-            titulo={libro.titulo}
-            autor={libro.autor}
-            genero={libro.genero}
-            imagenUrl={libro.imagenUrl}
-          />
+          // 3. CORRECCIÓN CLAVE: Pasamos el objeto 'libro' completo como una sola prop.
+          //    Esto permite que LibroCard tenga toda la información necesaria para el carrito.
+          <LibroCard key={libro.id} libro={libro} />
         ))}
       </section>
     </main>

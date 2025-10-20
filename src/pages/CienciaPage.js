@@ -1,26 +1,20 @@
 import React from 'react';
-import { libros } from '../data/libros'; // Importamos la lista completa de libros
-import LibroCard from '../components/LibroCard'; // Importamos el componente para mostrar cada libro
+import { libros } from '../data/libros';
+import LibroCard from '../components/LibroCard';
 
 function CienciaPage() {
-  // Filtramos el array de 'libros' para obtener solo aquellos
-  // cuya propiedad 'categoria' sea igual a 'ciencia-tecnologia'.
+  // 1. Filtramos la lista de libros para obtener solo los de la categoría "ciencia-tecnologia".
   const librosDeCiencia = libros.filter(libro => libro.categoria === 'ciencia-tecnologia');
 
   return (
     <main className="container">
-      <h2>Categoría: Ciencia y Tecnología</h2>
+      <h2 className="mb-4">Categoría: Ciencia y Tecnología</h2>
       <section className="book-list">
-        {/* Usamos .map() para recorrer la lista de libros ya filtrada */}
-        {/* y crear un componente <LibroCard> para cada uno. */}
+        {/* 2. Mapeamos la lista filtrada para crear una tarjeta por cada libro. */}
         {librosDeCiencia.map(libro => (
-          <LibroCard
-            key={libro.id} // La 'key' es un identificador único para React
-            titulo={libro.titulo}
-            autor={libro.autor}
-            genero={libro.genero}
-            imagenUrl={libro.imagenUrl}
-          />
+          // 3. CORRECCIÓN CLAVE: Pasamos el objeto 'libro' completo como una sola prop.
+          //    Esto permite que LibroCard tenga toda la información necesaria para el carrito.
+          <LibroCard key={libro.id} libro={libro} />
         ))}
       </section>
     </main>

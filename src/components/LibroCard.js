@@ -1,27 +1,37 @@
 import React from 'react';
+import { useCart } from '../context/CartContext'; // Importamos el hook para usar el carrito
 
-// Este componente es una "plantilla" que recibe los datos de cada libro a través de 'props'.
-// 'props' es un objeto que contiene toda la información que le pasamos desde la página padre
-// (por ejemplo, desde HomePage.js o FiccionPage.js).
-function LibroCard(props) {
+// CORRECCIÓN: Ahora recibimos el objeto 'libro' completo como una sola prop.
+function LibroCard({ libro }) {
+  // Obtenemos las funciones y datos que necesitamos del contexto del carrito.
+  const { addToCart, cartItems, MAX_ITEMS } = useCart();
+
+  // Verificamos si este libro ya está en el carrito.
+  const isInCart = cartItems.some(item => item.id === libro.id);
+  // Verificamos si el carrito ha alcanzado su capacidad máxima.
+  const isCartFull = cartItems.length >= MAX_ITEMS;
+
   return (
-    // Usamos la misma clase 'book' que en tu CSS original para mantener los estilos.
     <article className="book">
-      {/* La URL de la imagen se recibe a través de props.imagenUrl.
-        Las imágenes de la carpeta 'public' se pueden acceder directamente con una barra "/" al inicio.
-      */}
-      <img src={props.imagenUrl} alt={`Portada de ${props.titulo}`} />
+      <img src={libro.imagenUrl} alt={`Portada de ${libro.titulo}`} />
+      <h3>{libro.titulo}</h3>
+      <p>Autor: {libro.autor}</p>
+      <p>Género: {libro.genero}</p>
       
-      {/* Mostramos el título, autor y género que vienen en las props */}
-      <h3>{props.titulo}</h3>
-      <p>Autor: {props.autor}</p>
-      <p>Género: {props.genero}</p>
-      
-      {/* Este es un renderizado condicional. El botón "Agregar" solo se mostrará en la pantalla
-        si le pasamos la propiedad 'conBoton' como verdadera (true) al componente.
-        Ejemplo de uso: <LibroCard conBoton={true} />
+      {/* El botón ahora tiene una lógica más inteligente:
+        - onClick: Llama a la función 'addToCart' pasándole el objeto 'libro' completo.
+        - disabled: Se deshabilita si el libro ya está en el carrito O si el carrito está lleno.
+        - Texto dinámico: El texto del botón cambia para informar al usuario sobre el estado.
       */}
-      {props.conBoton && <button className="add-to-cart-btn">Agregar</button>}
+      <button 
+        className="add-to-cart-btn mt-auto" 
+        onClick={() => addToCart(libro)}
+        disabled={isInCart || isCartFull}
+      >
+        {isInCart 
+          ? 'En el carrito' 
+          : (isCartFull && !isInCart ? 'Carrito lleno' : 'Agregar para Pedir')}
+      </button>
     </article>
   );
 }
