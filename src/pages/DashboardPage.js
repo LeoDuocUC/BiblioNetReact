@@ -1,26 +1,22 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function DashboardPage() {
-  const { user, logout } = useAuth();
+  // 1. OBTENEMOS la lista real y dinámica de 'loanedBooks' desde nuestro AuthContext.
+  const { user, logout, loanedBooks } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
-    navigate('/'); // Redirige a la página de inicio después de cerrar sesión
+    navigate('/');
   };
 
-  // El ProtectedRoute se encargará de que 'user' siempre exista aquí.
-  if (!user) {
-    return null; // O un spinner de carga
-  }
+  // El componente ProtectedRoute ya se asegura de que 'user' exista,
+  // pero esta es una buena práctica de seguridad.
+  if (!user) return null;
 
-  // Datos de ejemplo como en tu usuarioprincipal.html
-  const librosPrestados = [
-    { id: 1, titulo: '1984', fechaVencimiento: '25 de Octubre, 2025' },
-    { id: 2, titulo: 'El Principito', fechaVencimiento: '29 de Octubre, 2025' },
-  ];
+  // Los datos de multas pueden seguir siendo de ejemplo por ahora.
   const multasPendientes = [
     { id: 1, libro: 'Cien años de soledad', monto: '$2.500 CLP' },
   ];
@@ -35,19 +31,31 @@ function DashboardPage() {
       </div>
 
       <div className="row g-4">
-        <div className="col-md-6">
+        <div className="col-md-8">
           <div className="card h-100 shadow-sm">
-            <div className="card-header"><h3>📚 Mis Libros Prestados</h3></div>
-            <ul className="list-group list-group-flush">
-              {librosPrestados.map(libro => (
-                <li key={libro.id} className="list-group-item">
-                  <strong>{libro.titulo}</strong> - Vence el {libro.fechaVencimiento}
-                </li>
-              ))}
-            </ul>
+            <div className="card-header"><h3>📚 Mis Libros Solicitados</h3></div>
+            
+            {/* 2. LÓGICA DE VISUALIZACIÓN DINÁMICA:
+                - Si la lista 'loanedBooks' tiene libros (su largo es mayor a 0), los mostramos.
+                - Si está vacía, mostramos un mensaje amigable y un botón para explorar.
+            */}
+            {loanedBooks.length > 0 ? (
+              <ul className="list-group list-group-flush">
+                {loanedBooks.map(libro => (
+                  <li key={libro.id} className="list-group-item">
+                    <strong>{libro.titulo}</strong> - Vence el {libro.fechaVencimiento}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="card-body text-center d-flex flex-column justify-content-center">
+                <p className="mb-3">Aún no has solicitado ningún libro.</p>
+                <Link to="/" className="btn btn-primary align-self-center">Explorar libros</Link>
+              </div>
+            )}
           </div>
         </div>
-        <div className="col-md-6">
+        <div className="col-md-4">
           <div className="card h-100 shadow-sm">
             <div className="card-header"><h3>💸 Multas Pendientes</h3></div>
             <ul className="list-group list-group-flush">

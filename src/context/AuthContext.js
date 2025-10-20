@@ -1,37 +1,40 @@
 import React, { createContext, useState, useContext } from 'react';
 
-// 1. Creamos el contexto. Es como un "almacén" global para el estado de autenticación.
 const AuthContext = createContext(null);
 
-// 2. Creamos un "Proveedor" (Provider). Este componente envolverá nuestra aplicación
-//    y hará que el estado de autenticación esté disponible para todos los componentes hijos.
 export const AuthProvider = ({ children }) => {
-  // Guardamos la información del usuario en el estado. 'null' significa que no hay sesión iniciada.
   const [user, setUser] = useState(null);
+  // 1. AÑADIMOS UN NUEVO ESTADO para guardar los libros prestados
+  const [loanedBooks, setLoanedBooks] = useState([]);
 
-  // Función de login
   const login = (userData) => {
-    // En una app real, aquí se haría una llamada a una API.
-    // Para este ejemplo, simplemente guardamos los datos del usuario.
     setUser(userData);
+    setLoanedBooks([]); // Limpiamos la lista al iniciar una nueva sesión
   };
 
-  // Función de logout
   const logout = () => {
     setUser(null);
+    setLoanedBooks([]);
   };
 
-  // El Provider devuelve el contexto con los valores que queremos compartir:
-  // el usuario actual y las funciones de login y logout.
+  // 2. AÑADIMOS UNA NUEVA FUNCIÓN para agregar libros a la lista de prestados
+  const addBooksToLoan = (books) => {
+    const newBooks = books.map(book => ({
+      ...book,
+      fechaVencimiento: '30 de Octubre, 2025' // Añadimos una fecha de ejemplo
+    }));
+    // Evitamos duplicados al añadir libros
+    setLoanedBooks(prevBooks => [...new Map([...prevBooks, ...newBooks].map(item => [item.id, item])).values()]);
+  };
+
+  // 3. EXPONEMOS los nuevos valores en el contexto
+  const value = { user, login, logout, loanedBooks, addBooksToLoan };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// 3. Creamos un "hook" personalizado. Esto nos facilitará el acceso al contexto
-//    desde cualquier componente, simplemente llamando a useAuth().
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
