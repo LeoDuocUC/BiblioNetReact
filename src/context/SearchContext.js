@@ -1,7 +1,8 @@
 import React, { createContext, useState, useContext } from 'react';
 import { libros } from '../data/libros'; // Importamos nuestra base de datos
 
-const SearchContext = createContext();
+// 🚨 CORRECCIÓN CRÍTICA: Exportamos SearchContext para que los tests puedan usar <SearchContext.Provider>
+export const SearchContext = createContext();
 
 export const useSearch = () => useContext(SearchContext);
 
