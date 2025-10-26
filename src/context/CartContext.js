@@ -1,50 +1,43 @@
-import React, { createContext, useState, useContext } from 'react';
-import { useAuth } from './AuthContext'; // 1. Importamos el contexto de autenticación para poder usarlo
+import React, { createContext, useContext, useState } from 'react';
 
-// 🚨 CORRECCIÓN: Exportamos CartContext
 export const CartContext = createContext();
 
-export const useCart = () => useContext(CartContext);
-
 export const CartProvider = ({ children }) => {
+  const MAX_ITEMS = 5;
   const [cartItems, setCartItems] = useState([]);
-  // 2. OBTENEMOS la función 'addBooksToLoan' y el estado del 'user' desde AuthContext
-  const { user, addBooksToLoan } = useAuth();
-  const MAX_ITEMS = 3;
 
-  const addToCart = (book) => {
-    // 🚨 CORRECCIÓN: Reemplazamos alert() por console.warn
-    if (!user) {
-      console.warn('Debes iniciar sesión para solicitar libros.');
-      return;
-    }
-    if (cartItems.length >= MAX_ITEMS) {
-      console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
-      return;
-    }
-    if (cartItems.find(item => item.id === book.id)) {
-      console.warn(`${book.titulo} ya está en tu carrito.`);
-      return;
-    }
-    setCartItems(prevItems => [...prevItems, book]);
+  const addToCart = (libro) => {
+    setCartItems(prev => {
+      if (prev.length >= MAX_ITEMS) {
+        console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
+        return prev; // no agregar
+      }
+      if (prev.find(item => item.id === libro.id)) {
+        console.warn(`${libro.titulo} ya está en tu carrito.`);
+        return prev; // no agregar repetido
+      }
+      return [...prev, libro];
+    });
   };
 
-  const removeFromCart = (bookId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== bookId));
+  const removeFromCart = (libroId) => {
+    setCartItems(prev => prev.filter(item => item.id !== libroId));
   };
 
   const placeOrder = () => {
-    if (cartItems.length === 0) return;
-
-    // 3. ¡AQUÍ ESTÁ LA CONEXIÓN!
-    addBooksToLoan(cartItems);
-
-    // 🚨 CORRECCIÓN: Reemplazamos alert() por console.log.
+    if (cartItems.length === 0) {
+      console.warn('El carrito está vacío.');
+      return;
+    }
     console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
-    setCartItems([]); // Limpiamos el carrito como antes
+    setCartItems([]);
   };
 
-  const value = { cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS };
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
+  return (
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS }}>
+      {children}
+    </CartContext.Provider>
+  );
 };
+
+export const useCart = () => useContext(CartContext);

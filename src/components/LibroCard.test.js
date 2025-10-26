@@ -1,58 +1,38 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react'; 
-import LibroCard from './LibroCard'; 
-import { CartContext } from '../context/CartContext'; 
+import { render, screen, fireEvent } from '@testing-library/react';
+import { CartProvider } from '../context/CartContext';
+import LibroCard from '../components/LibroCard';
 
-const mockAddToCart = jasmine.createSpy('addToCart'); 
+describe('<LibroCard />', () => {
+  const libro = { id: 1, titulo: 'Libro A', autor: 'Autor X', genero: 'Ficción' };
 
-describe('Pruebas en <LibroCard />', () => {
-  const mockLibro = {
-    id: 1,
-    titulo: 'El Caballero de la Noche',
-    autor: 'Frank Miller',
-    genero: 'Ficción',
-    imagenUrl: '/ruta/imagen.jpg'
-  };
-
-  const MAX_ITEMS = 5;
-  let baseCartState; 
-  
-  beforeEach(() => {
-    mockAddToCart.calls.reset(); 
-    baseCartState = {
-      addToCart: mockAddToCart,
-      cartItems: [],
-      MAX_ITEMS: MAX_ITEMS,
-    };
-  });
-
-  const CartProviderWrapper = ({ children }) => (
-    <CartContext.Provider value={baseCartState}>
-      {children}
-    </CartContext.Provider>
-  );
-
-  it('Debe renderizar la información del libro correctamente', () => {
+  it('Agrega libro al carrito y desactiva botón', () => {
     render(
-      <CartProviderWrapper>
-        <LibroCard libro={mockLibro} />
-      </CartProviderWrapper>
-    ); 
-
-    expect(screen.queryByText(/el caballero de la noche/i)).toBeTruthy();
-    expect(screen.queryByText(/frank miller/i)).toBeTruthy();
-  });
-  
-  it('Debe llamar a addToCart al hacer clic en el botón de añadir', () => {
-    render(
-      <CartProviderWrapper>
-        <LibroCard libro={mockLibro} />
-      </CartProviderWrapper>
+      <CartProvider>
+        <LibroCard libro={libro} />
+      </CartProvider>
     );
-    
-    fireEvent.click(screen.getByRole('button', { name: /agregar/i }));
-    
-    expect(mockAddToCart).toHaveBeenCalledTimes(1);
-    expect(mockAddToCart).toHaveBeenCalledWith(mockLibro); 
+
+    const boton = screen.getByText(/Agregar para Pedir/i);
+    fireEvent.click(boton);
+
+    const carritoBoton = screen.getByText(/En el carrito/i);
+    expect(carritoBoton.disabled).toBe(true); // ✅ funciona en Karma/Jasmine
+  });
+
+  it('No permite agregar libros repetidos', () => {
+    render(
+      <CartProvider>
+        <LibroCard libro={libro} />
+        <LibroCard libro={libro} />
+      </CartProvider>
+    );
+
+    const botones = screen.getAllByText(/Agregar para Pedir/i);
+    fireEvent.click(botones[0]);
+    fireEvent.click(botones[1]);
+
+    const carritoBotones = screen.getAllByText(/En el carrito/i);
+    expect(carritoBotones.length).toBe(2); // ambos botones muestran "En el carrito"
   });
 });
