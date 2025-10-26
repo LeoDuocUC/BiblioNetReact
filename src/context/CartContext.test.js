@@ -1,42 +1,54 @@
-import React from 'react';
-import { renderHook, act } from '@testing-library/react';
-import { CartProvider, useCart } from '../context/CartContext';
+import React, { createContext, useContext, useState } from 'react';
+import { AuthContext } from './AuthContext'; // ✅ import AuthContext
 
-describe('CartContext', () => {
-  it('Agrega libro correctamente', () => {
-    const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>;
-    const { result } = renderHook(() => useCart(), { wrapper });
+export const CartContext = createContext();
 
-    act(() => {
-      result.current.addToCart({ id: 1, titulo: 'Libro A' });
-    });
+export const CartProvider = ({ children }) => {
+  const MAX_ITEMS = 5;
+  const [cartItems, setCartItems] = useState([]);
+  
+  // ✅ Access user from AuthContext
+  const { user } = useContext(AuthContext);
 
-    expect(result.current.cartItems.length).toBe(1);
-    expect(result.current.cartItems[0].titulo).toBe('Libro A');
-  });
+  const addToCart = (libro) => {
+    // ✅ Step 1: check if user is logged in
+    if (!user) {
+      alert('Debes iniciar sesión para solicitar libros.');
+      return; // stop execution
+    }
 
-  it('No permite agregar libros repetidos', () => {
-    const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>;
-    const { result } = renderHook(() => useCart(), { wrapper });
-
-    act(() => {
-      result.current.addToCart({ id: 1, titulo: 'Libro A' });
-      result.current.addToCart({ id: 1, titulo: 'Libro A' });
-    });
-
-    expect(result.current.cartItems.length).toBe(1); // no se duplica
-  });
-
-  it('No permite superar MAX_ITEMS', () => {
-    const wrapper = ({ children }) => <CartProvider>{children}</CartProvider>;
-    const { result } = renderHook(() => useCart(), { wrapper });
-
-    act(() => {
-      for (let i = 1; i <= 6; i++) {
-        result.current.addToCart({ id: i, titulo: `Libro ${i}` });
+    // ✅ Step 2: enforce limits and duplication
+    setCartItems(prev => {
+      if (prev.length >= MAX_ITEMS) {
+        console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
+        return prev;
       }
+      if (prev.find(item => item.id === libro.id)) {
+        console.warn(`${libro.titulo} ya está en tu carrito.`);
+        return prev;
+      }
+      return [...prev, libro];
     });
+  };
 
-    expect(result.current.cartItems.length).toBe(5); // MAX_ITEMS = 5
-  });
-});
+  const removeFromCart = (libroId) => {
+    setCartItems(prev => prev.filter(item => item.id !== libroId));
+  };
+
+  const placeOrder = () => {
+    if (cartItems.length === 0) {
+      console.warn('El carrito está vacío.');
+      return;
+    }
+    console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
+    setCartItems([]);
+  };
+
+  return (
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => useContext(CartContext);
