@@ -1,54 +1,97 @@
-import React, { createContext, useContext, useState } from 'react';
-import { AuthContext } from './AuthContext'; // ✅ import AuthContext
+import React from 'react';
+import { renderHook } from '@testing-library/react';
+import { CartProvider, useCart } from './CartContext';
 
-export const CartContext = createContext();
+describe('Pruebas en <CartContext />', () => {
 
-export const CartProvider = ({ children }) => {
-  const MAX_ITEMS = 5;
-  const [cartItems, setCartItems] = useState([]);
-  
-  // ✅ Access user from AuthContext
-  const { user } = useContext(AuthContext);
+  let warnSpy;
+  let logSpy;
 
-  const addToCart = (libro) => {
-    // ✅ Step 1: check if user is logged in
-    if (!user) {
-      alert('Debes iniciar sesión para solicitar libros.');
-      return; // stop execution
-    }
+  beforeEach(() => {
+    warnSpy = spyOn(console, 'warn');
+    logSpy = spyOn(console, 'log');
+  });
 
-    // ✅ Step 2: enforce limits and duplication
-    setCartItems(prev => {
-      if (prev.length >= MAX_ITEMS) {
-        console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
-        return prev;
-      }
-      if (prev.find(item => item.id === libro.id)) {
-        console.warn(`${libro.titulo} ya está en tu carrito.`);
-        return prev;
-      }
-      return [...prev, libro];
+  it('debe iniciar con un carrito vacío', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+    expect(result.current.cartItems).toEqual([]);
+    expect(result.current.MAX_ITEMS).toBe(5);
+  });
+
+  it('debe agregar libros correctamente', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+    const libro = { id: 1, titulo: 'Libro A' };
+
+    React.act(() => {
+      result.current.addToCart(libro);
     });
-  };
 
-  const removeFromCart = (libroId) => {
-    setCartItems(prev => prev.filter(item => item.id !== libroId));
-  };
+    expect(result.current.cartItems.length).toBe(1);
+    expect(result.current.cartItems[0]).toEqual(libro);
+    expect(console.warn).not.toHaveBeenCalled();
+  });
 
-  const placeOrder = () => {
-    if (cartItems.length === 0) {
-      console.warn('El carrito está vacío.');
-      return;
-    }
-    console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
-    setCartItems([]);
-  };
+  it('debe evitar agregar un libro duplicado', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+    const libro = { id: 1, titulo: 'Libro A' };
 
-  return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS }}>
-      {children}
-    </CartContext.Provider>
-  );
-};
+    React.act(() => {
+      result.current.addToCart(libro);
+      result.current.addToCart(libro);
+    });
 
-export const useCart = () => useContext(CartContext);
+    expect(result.current.cartItems.length).toBe(1);
+    expect(warnSpy).toHaveBeenCalledWith(`${libro.titulo} ya está en tu carrito.`);
+  });
+
+  it('debe evitar agregar más de 5 libros', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+
+    React.act(() => {
+      for (let i = 1; i <= 6; i++) {
+        result.current.addToCart({ id: i, titulo: `Libro ${i}` });
+      }
+    });
+
+    expect(result.current.cartItems.length).toBe(5);
+    expect(warnSpy).toHaveBeenCalledWith('No puedes solicitar más de 5 libros.');
+  });
+
+  it('debe eliminar libros del carrito correctamente', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+    const libro = { id: 1, titulo: 'Libro A' };
+
+    React.act(() => {
+      result.current.addToCart(libro);
+      result.current.removeFromCart(1);
+    });
+
+    expect(result.current.cartItems.length).toBe(0);
+  });
+
+  it('debe advertir si se intenta hacer pedido con carrito vacío', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+
+    React.act(() => {
+      result.current.placeOrder();
+    });
+
+    expect(warnSpy).toHaveBeenCalledWith('El carrito está vacío.');
+    expect(logSpy).not.toHaveBeenCalled();
+  });
+
+  it('debe limpiar el carrito al realizar un pedido válido', () => {
+    const { result } = renderHook(() => useCart(), { wrapper: CartProvider });
+
+    React.act(() => {
+      result.current.addToCart({ id: 1, titulo: 'Libro A' });
+      result.current.placeOrder();
+    });
+
+    expect(logSpy).toHaveBeenCalledWith(
+      '¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.'
+    );
+    expect(result.current.cartItems).toEqual([]);
+  });
+
+});

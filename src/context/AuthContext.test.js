@@ -2,45 +2,78 @@ import React from 'react';
 import { renderHook } from '@testing-library/react';
 import { AuthProvider, useAuth } from './AuthContext';
 
-// 'renderHook' nos permite probar un hook de React de forma aislada
-describe('Contexto: AuthContext', () => {
+describe('Pruebas en <AuthContext />', () => {
 
-  it('debería tener un usuario nulo por defecto', () => {
-    // Renderizamos el hook 'useAuth' dentro de su Proveedor
+  it('debe tener usuario y libros prestados vacíos por defecto', () => {
     const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
-    // Verificamos que el valor inicial del usuario sea nulo
+
     expect(result.current.user).toBe(null);
+    expect(result.current.loanedBooks).toEqual([]);
   });
 
-  it('debería actualizar el usuario al llamar a login', () => {
+  it('debe permitir hacer login y guardar el usuario', () => {
     const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
-    const mockUser = { name: 'Leo', email: 'usuario' };
+    const mockUser = { name: 'Leo', email: 'usuario@correo.com' };
 
-    // Actuamos: llamamos a la función login
     React.act(() => {
       result.current.login(mockUser);
     });
-    
-    // Verificamos: el estado 'user' en el contexto debe ser el mockUser
+
     expect(result.current.user).toEqual(mockUser);
+    expect(result.current.loanedBooks).toEqual([]); // se limpia al iniciar sesión
   });
 
-  it('debería limpiar el usuario al llamar a logout', () => {
+  it('debe hacer logout correctamente', () => {
     const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
-    const mockUser = { name: 'Leo', email: 'usuario' };
+    const mockUser = { name: 'Leo', email: 'usuario@correo.com' };
 
-    // Primero iniciamos sesión
     React.act(() => {
       result.current.login(mockUser);
+      result.current.addBooksToLoan([{ id: 1, titulo: 'Libro A' }]);
     });
-    expect(result.current.user).not.toBe(null); // Verificamos que el login funcionó
 
-    // Actuamos: llamamos a logout
+    expect(result.current.user).toEqual(mockUser);
+    expect(result.current.loanedBooks.length).toBe(1);
+
     React.act(() => {
       result.current.logout();
     });
 
-    // Verificamos: el usuario debe ser nulo nuevamente
     expect(result.current.user).toBe(null);
+    expect(result.current.loanedBooks).toEqual([]);
   });
+
+  it('debe agregar libros a loanedBooks sin duplicados', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
+
+    const books = [
+      { id: 1, titulo: 'Libro A' },
+      { id: 2, titulo: 'Libro B' }
+    ];
+
+    React.act(() => {
+      result.current.addBooksToLoan(books);
+      result.current.addBooksToLoan([{ id: 1, titulo: 'Libro A (duplicado)' }]);
+    });
+
+    expect(result.current.loanedBooks.length).toBe(2);
+    expect(result.current.loanedBooks[0]).toEqual(
+      jasmine.objectContaining({ id: 1, titulo: 'Libro A' })
+    );
+    expect(result.current.loanedBooks[0].fechaVencimiento)
+      .toBe('30 de Octubre, 2025');
+  });
+
+  it('debe mantener la misma referencia del contexto', () => {
+    const { result } = renderHook(() => useAuth(), { wrapper: AuthProvider });
+    const firstValue = result.current;
+    const secondValue = renderHook(() => useAuth(), { wrapper: AuthProvider }).result.current;
+
+    expect(typeof firstValue.login).toBe('function');
+    expect(typeof firstValue.logout).toBe('function');
+    expect(typeof firstValue.addBooksToLoan).toBe('function');
+    expect(firstValue.user).toBe(null);
+    expect(secondValue.user).toBe(null);
+  });
+
 });
