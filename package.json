@@ -47,6 +47,7 @@
     "@testing-library/react": "^16.3.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-istanbul": "^7.0.1",
+    "css-loader": "^7.1.2",
     "jasmine": "^5.12.0",
     "jest-mock-extended": "^4.0.0",
     "karma": "^6.4.4",
@@ -56,6 +57,7 @@
     "karma-sourcemap-loader": "^0.4.0",
     "karma-spec-reporter": "^0.0.36",
     "karma-webpack": "^5.0.1",
+    "style-loader": "^4.0.0",
     "webpack": "^5.102.1"
   }
 }

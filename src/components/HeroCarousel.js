@@ -16,7 +16,7 @@ function HeroCarousel() {
       captionText: 'Sumérgete en mundos llenos de misterio y emoción.'
     },
     {
-      imgSrc: '/imagen/padre-rico.webp',
+      imgSrc: '/imagen/padre-rico-padre-pobre-libro.jpg',
       alt: 'Portada de Padre Rico, Padre Pobre',
       captionTitle: 'Nuevos Conocimientos',
       captionText: 'Expande tu mente con nuestra colección de no ficción.'
@@ -29,12 +29,17 @@ function HeroCarousel() {
       {carouselItems.map((item, index) => (
         <Carousel.Item key={index}>
           {/* Usamos un div contenedor para asegurar que la imagen se recorte bien */}
-          <div style={{ height: '500px', overflow: 'hidden' }}>
+          {/* Añadimos un fondo gris por si la imagen no ocupa todo el espacio */}
+          <div style={{ height: '500px', overflow: 'hidden', backgroundColor: '#eeeeee' }}>
              <img
               className="d-block w-100"
               src={item.imgSrc}
               alt={item.alt}
-              style={{ objectFit: 'cover', height: '100%', width: '100%' }}
+              style={{ 
+                objectFit: 'contain', // <-- ESTE ES EL CAMBIO
+                height: '100%', 
+                width: '100%' 
+              }}
             />
           </div>
           <Carousel.Caption className="bg-dark bg-opacity-50 p-3 rounded">

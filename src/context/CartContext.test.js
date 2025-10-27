@@ -1,54 +1,75 @@
 import React, { createContext, useContext, useState } from 'react';
-import { AuthContext } from './AuthContext'; // ✅ import AuthContext
+import { AuthContext } from './AuthContext';
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const MAX_ITEMS = 5;
+  const { user, addBooksToLoan } = useContext(AuthContext);
   const [cartItems, setCartItems] = useState([]);
-  
-  // ✅ Access user from AuthContext
-  const { user } = useContext(AuthContext);
 
-  const addToCart = (libro) => {
-    // ✅ Step 1: check if user is logged in
+  const addToCart = (book) => {
     if (!user) {
       alert('Debes iniciar sesión para solicitar libros.');
-      return; // stop execution
-    }
-
-    // ✅ Step 2: enforce limits and duplication
-    setCartItems(prev => {
-      if (prev.length >= MAX_ITEMS) {
-        console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
-        return prev;
-      }
-      if (prev.find(item => item.id === libro.id)) {
-        console.warn(`${libro.titulo} ya está en tu carrito.`);
-        return prev;
-      }
-      return [...prev, libro];
-    });
-  };
-
-  const removeFromCart = (libroId) => {
-    setCartItems(prev => prev.filter(item => item.id !== libroId));
-  };
-
-  const placeOrder = () => {
-    if (cartItems.length === 0) {
-      console.warn('El carrito está vacío.');
       return;
     }
-    console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
+
+    if (cartItems.length >= 3) {
+      alert('No puedes solicitar más de 3 libros.');
+      return;
+    }
+
+    const existingBook = cartItems.find((item) => item.id === book.id);
+    if (existingBook) {
+      if (existingBook.titulo === book.titulo) {
+        alert(`${book.titulo} ya está en tu carrito.`);
+      } else {
+        alert('Otro Título ya está en tu carrito.');
+      }
+      return;
+    }
+
+    setCartItems([...cartItems, book]);
+  };
+
+  const removeFromCart = (bookId) => {
+    setCartItems((prev) => prev.filter((b) => b.id !== bookId));
+  };
+
+  const clearCart = () => {
     setCartItems([]);
   };
 
+  const placeOrder = () => {
+    if (!user) {
+      alert('Debes iniciar sesión para solicitar libros.');
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      alert('El carrito está vacío.');
+      return;
+    }
+
+    if (addBooksToLoan) {
+      addBooksToLoan(cartItems);
+      alert('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel.');
+      clearCart();
+    } else {
+      console.warn('addBooksToLoan no está disponible en AuthContext.');
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        clearCart,
+        placeOrder,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
 };
-
-export const useCart = () => useContext(CartContext);

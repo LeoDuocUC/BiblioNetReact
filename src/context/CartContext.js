@@ -1,10 +1,17 @@
+// Archivo: CartContext.js
+
 import React, { createContext, useContext, useState } from 'react';
+import { useAuth } from './AuthContext'; // <-- 1. IMPORTAR useAuth
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const MAX_ITEMS = 5;
   const [cartItems, setCartItems] = useState([]);
+  
+  // 2. OBTENER LA FUNCIÓN DEL AUTHCONTEXT
+  // (Asegúrate de que AuthProvider esté "envolviendo" a CartProvider en App.js para que esto funcione)
+  const { addBooksToLoan } = useAuth(); 
 
   const addToCart = (libro) => {
     setCartItems(prev => {
@@ -29,8 +36,16 @@ export const CartProvider = ({ children }) => {
       console.warn('El carrito está vacío.');
       return;
     }
+
+    // --- ¡AQUÍ ESTÁ EL ARREGLO! ---
+    // 3. Antes de limpiar el carrito, pasamos los libros al AuthContext.
+    addBooksToLoan(cartItems);
+    // -----------------------------
+
     console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
-    setCartItems([]);
+    
+    // Ahora sí limpiamos el carrito, después de haberlos "enviado"
+    setCartItems([]); 
   };
 
   return (
