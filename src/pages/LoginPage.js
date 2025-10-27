@@ -2,37 +2,50 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function LoginPage() {
+function LoginPage({ mockNavigate, mockLogin }) { 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
-  const navigate = useNavigate(); // Hook para redirigir al usuario
-  const { login } = useAuth(); // Obtenemos la función login de nuestro contexto
+  // Usa el mock si está disponible, sino el hook real
+  const navigate = mockNavigate || useNavigate(); 
+  
+  // 💡 AJUSTE CRÍTICO: Obtenemos el objeto completo de useAuth() 
+  // para evitar la desestructuración si devuelve null/undefined.
+  const authContext = useAuth();
+  
+  // Definimos la función de login (mock, si se inyectó, o la del contexto)
+  // Usamos el operador de encadenamiento opcional (?) para evitar fallar si authContext es null.
+  const loginFn = mockLogin || authContext?.login; 
 
   const handleSubmit = (event) => {
-    event.preventDefault(); // Prevenimos que el formulario recargue la página
+    event.preventDefault(); 
+    
+    // Asegúrate de que la función de login exista antes de intentar usarla
+    if (!loginFn) {
+        // Esto solo debería pasar si el contexto no está envuelto en producción 
+        // y no se inyectó un mock en testing.
+        console.error("Auth context login function is missing.");
+        return; 
+    }
 
-    // Lógica de validación (la misma que en tu HTML)
+    // Lógica de validación
     if (email === 'usuario' && password === '1234') {
-      // Si las credenciales son correctas:
       setError('');
       
-      // Creamos un objeto de usuario de ejemplo
       const userData = { name: 'Leo', email: 'usuario' };
       
-      // Llamamos a la función login del contexto
-      login(userData);
+      // Llama a la función de login (mock o real)
+      loginFn(userData);
       
-      // Redirigimos al usuario al panel principal
+      // Redirige al usuario (mock o real)
       navigate('/dashboard'); 
     } else {
-      // Si son incorrectas, mostramos un mensaje de error
+      // Muestra un mensaje de error
       setError('Usuario o contraseña incorrecta.');
     }
   };
 
-  // Usamos clases de Bootstrap para el estilo del formulario
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
