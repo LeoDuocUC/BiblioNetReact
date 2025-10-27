@@ -1,67 +1,73 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import LoginPage from '../pages/LoginPage'; 
 
-// Componente con lógica de validación
-const LoginPage = ({ onLogin }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError('Debe ingresar correo y contraseña');
-      return;
-    }
-    if (onLogin) onLogin(email, password);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        placeholder="Correo"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <input
-        placeholder="Contraseña"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Ingresar</button>
-      {error && <p role="alert">{error}</p>}
-    </form>
-  );
-};
+// --- Spies de Jasmine ---
+const mockNavigate = jasmine.createSpy('navigate');
+const mockLogin = jasmine.createSpy('login');
 
 describe('LoginPage', () => {
-  it('renderiza los campos y el botón', () => {
-    render(<LoginPage />);
-    expect(screen.getByPlaceholderText('Correo')).toBeTruthy();
-    expect(screen.getByPlaceholderText('Contraseña')).toBeTruthy();
-    expect(screen.getByText('Ingresar')).toBeTruthy();
+  beforeEach(() => {
+    mockNavigate.calls.reset();
+    mockLogin.calls.reset();
   });
 
-  it('muestra error si los campos están vacíos', () => {
-    render(<LoginPage />);
-    fireEvent.click(screen.getByText('Ingresar'));
-    const errorMessage = screen.getByRole('alert');
-    expect(errorMessage.textContent).toBe('Debe ingresar correo y contraseña');
+  // Función de ayuda para renderizar inyectando los mocks
+  const renderLoginPageWithMocks = () => {
+    // Ya que el componente fue modificado para manejar un contexto nulo,
+    // simplemente pasamos los mocks como props.
+    return render(
+      <LoginPage 
+        mockNavigate={mockNavigate} 
+        mockLogin={mockLogin}     
+      />
+    );
+  };
+  
+  // Test 1: Renderizado y Manejo de Inputs (EXITOSO)
+  it('debería renderizar el formulario y actualizar los inputs', () => {
+    renderLoginPageWithMocks();
+
+    const emailInput = screen.getByLabelText('Usuario');
+    const passwordInput = screen.getByLabelText('Contraseña');
+    
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+
+    expect(emailInput.value).toBe('test@example.com');
+    expect(passwordInput.value).toBe('password123');
   });
 
-  it('llama a onLogin con los datos correctos', () => {
-    const mockLogin = jasmine.createSpy('onLogin');
-    render(<LoginPage onLogin={mockLogin} />);
+  // Test 2: Login Exitoso (EXITOSO)
+  it('debería llamar a login y redirigir con credenciales correctas', () => {
+    renderLoginPageWithMocks();
+    
+    fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: 'usuario' } });
+    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: '1234' } });
 
-    fireEvent.change(screen.getByPlaceholderText('Correo'), {
-      target: { value: 'bryan@test.com' },
-    });
-    fireEvent.change(screen.getByPlaceholderText('Contraseña'), {
-      target: { value: '1234' },
-    });
     fireEvent.click(screen.getByText('Ingresar'));
 
-    expect(mockLogin).toHaveBeenCalledWith('bryan@test.com', '1234');
+    expect(mockLogin).toHaveBeenCalledTimes(1);
+    expect(mockLogin).toHaveBeenCalledWith({ name: 'Leo', email: 'usuario' });
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
+    
+    expect(screen.queryByText('Usuario o contraseña incorrecta.')).toBeFalsy(); 
+  });
+
+  // Test 3: Login Fallido (EXITOSO)
+  it('debería mostrar un error con credenciales incorrectas', () => {
+    renderLoginPageWithMocks();
+    
+    fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: 'bad_user' } });
+    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'wrong_pass' } });
+
+    fireEvent.click(screen.getByText('Ingresar'));
+
+    expect(mockLogin).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+
+    const errorAlert = screen.getByText('Usuario o contraseña incorrecta.');
+    expect(errorAlert).toBeTruthy();
   });
 });
