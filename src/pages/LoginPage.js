@@ -7,42 +7,33 @@ function LoginPage({ mockNavigate, mockLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
-  // Usa el mock si est谩 disponible, sino el hook real
-  const navigate = mockNavigate || useNavigate(); 
+  // --- CORRECTION ---
+  // 1. Llama al hook real INCONDICIONALMENTE en el nivel superior.
+  const reactNavigate = useNavigate();
+  // 2. AHORA puedes usar la lógica para decidir cuál usar.
+  const navigate = mockNavigate || reactNavigate;
+  // --- FIN DE LA CORRECCIóN ---
   
-  // 馃挕 AJUSTE CR脥TICO: Obtenemos el objeto completo de useAuth() 
-  // para evitar la desestructuraci贸n si devuelve null/undefined.
   const authContext = useAuth();
   
-  // Definimos la funci贸n de login (mock, si se inyect贸, o la del contexto)
-  // Usamos el operador de encadenamiento opcional (?) para evitar fallar si authContext es null.
   const loginFn = mockLogin || authContext?.login; 
 
   const handleSubmit = (event) => {
     event.preventDefault(); 
     
-    // Aseg煤rate de que la funci贸n de login exista antes de intentar usarla
     if (!loginFn) {
-        // Esto solo deber铆a pasar si el contexto no est谩 envuelto en producci贸n 
-        // y no se inyect贸 un mock en testing.
         console.error("Auth context login function is missing.");
         return; 
     }
 
-    // L贸gica de validaci贸n
+    // Lógica de validación
     if (email === 'usuario' && password === '1234') {
       setError('');
-      
       const userData = { name: 'Leo', email: 'usuario' };
-      
-      // Llama a la funci贸n de login (mock o real)
       loginFn(userData);
-      
-      // Redirige al usuario (mock o real)
       navigate('/dashboard'); 
     } else {
-      // Muestra un mensaje de error
-      setError('Usuario o contrase帽a incorrecta.');
+      setError('Usuario o contrase?a incorrecta.');
     }
   };
 
@@ -66,7 +57,7 @@ function LoginPage({ mockNavigate, mockLogin }) {
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Contrase帽a</label>
+                  <label htmlFor="password" className="form-label">Contrase?a</label>
                   <input
                     type="password"
                     className="form-control"
@@ -77,7 +68,6 @@ function LoginPage({ mockNavigate, mockLogin }) {
                   />
                 </div>
                 
-                {/* Mostramos el mensaje de error si existe */}
                 {error && <div className="alert alert-danger">{error}</div>}
 
                 <div className="d-grid">
