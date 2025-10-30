@@ -6,34 +6,30 @@ function LoginPage({ mockNavigate, mockLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
-  // --- CORRECTION ---
-  // 1. Llama al hook real INCONDICIONALMENTE en el nivel superior.
+
+  // Navigation (mock-safe)
   const reactNavigate = useNavigate();
-  // 2. AHORA puedes usar la l車gica para decidir cu芍l usar.
   const navigate = mockNavigate || reactNavigate;
-  // --- FIN DE LA CORRECCI車N ---
-  
-  const authContext = useAuth();
-  
-  const loginFn = mockLogin || authContext?.login; 
+
+  // Safe Auth Hook (no provider protection)
+  const authContext = (typeof useAuth === 'function' ? useAuth() : {}) || {};
+  const loginFn = mockLogin || authContext.login || (() => {
+    console.warn('Auth context login function is missing.');
+  });
 
   const handleSubmit = (event) => {
-    event.preventDefault(); 
-    
-    if (!loginFn) {
-        console.error("Auth context login function is missing.");
-        return; 
-    }
+    event.preventDefault();
 
-    // L車gica de validaci車n
+    // Validation logic
     if (email === 'usuario' && password === '1234') {
       setError('');
       const userData = { name: 'Leo', email: 'usuario' };
       loginFn(userData);
-      navigate('/dashboard'); 
+      navigate('/dashboard');
+      console.log('Login successful');
     } else {
-      setError('Usuario o contrase?a incorrecta.');
+      setError('Usuario o contrase鎙 incorrecta.');
+      console.log('Credenciales incorrectas');
     }
   };
 
@@ -53,21 +49,19 @@ function LoginPage({ mockNavigate, mockLogin }) {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Contrase?a</label>
+                  <label htmlFor="password" className="form-label">Contrase鎙</label>
                   <input
                     type="password"
                     className="form-control"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
                   />
                 </div>
-                
+
                 {error && <div className="alert alert-danger">{error}</div>}
 
                 <div className="d-grid">
