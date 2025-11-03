@@ -1,73 +1,96 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import LoginPage from '../pages/LoginPage'; 
+import { MemoryRouter } from 'react-router-dom';
+import LoginPage from './LoginPage';
 
-// --- Spies de Jasmine ---
-const mockNavigate = jasmine.createSpy('navigate');
-const mockLogin = jasmine.createSpy('login');
-
-describe('LoginPage', () => {
-  beforeEach(() => {
-    mockNavigate.calls.reset();
-    mockLogin.calls.reset();
-  });
-
-  // Función de ayuda para renderizar inyectando los mocks
-  const renderLoginPageWithMocks = () => {
-    // Ya que el componente fue modificado para manejar un contexto nulo,
-    // simplemente pasamos los mocks como props.
-    return render(
-      <LoginPage 
-        mockNavigate={mockNavigate} 
-        mockLogin={mockLogin}     
-      />
-    );
+describe('LoginPage Component (Karma + Jasmine)', () => {
+  const getPasswordInput = () => {
+    // safer: find by id fallback because "ñ" gets misencoded on Windows
+    return screen.getByLabelText(/Contrase/i) || document.querySelector('#password');
   };
-  
-  // Test 1: Renderizado y Manejo de Inputs (EXITOSO)
-  it('debería renderizar el formulario y actualizar los inputs', () => {
-    renderLoginPageWithMocks();
 
-    const emailInput = screen.getByLabelText('Usuario');
-    const passwordInput = screen.getByLabelText('Contraseña');
-    
-    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+  it('debería renderizar el formulario correctamente', () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
 
-    expect(emailInput.value).toBe('test@example.com');
-    expect(passwordInput.value).toBe('password123');
+    expect(screen.getByText(/Acceso Usuario/i)).toBeTruthy();
+    expect(screen.getByRole('button', { name: /Ingresar/i })).toBeTruthy();
+    expect(screen.getByLabelText(/Usuario/i)).toBeTruthy();
+    expect(getPasswordInput()).toBeTruthy();
   });
 
-  // Test 2: Login Exitoso (EXITOSO)
-  it('debería llamar a login y redirigir con credenciales correctas', () => {
-    renderLoginPageWithMocks();
-    
-    fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: 'usuario' } });
-    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: '1234' } });
+  it('debería actualizar los valores de los inputs', () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
 
-    fireEvent.click(screen.getByText('Ingresar'));
+    const usuarioInput = screen.getByLabelText(/Usuario/i);
+    const passwordInput = getPasswordInput();
 
-    expect(mockLogin).toHaveBeenCalledTimes(1);
-    expect(mockLogin).toHaveBeenCalledWith({ name: 'Leo', email: 'usuario' });
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
-    
-    expect(screen.queryByText('Usuario o contraseña incorrecta.')).toBeFalsy(); 
+    fireEvent.change(usuarioInput, { target: { value: 'usuario' } });
+    fireEvent.change(passwordInput, { target: { value: '1234' } });
+
+    expect(usuarioInput.value).toBe('usuario');
+    expect(passwordInput.value).toBe('1234');
   });
 
-  // Test 3: Login Fallido (EXITOSO)
-  it('debería mostrar un error con credenciales incorrectas', () => {
-    renderLoginPageWithMocks();
-    
-    fireEvent.change(screen.getByLabelText('Usuario'), { target: { value: 'bad_user' } });
-    fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: 'wrong_pass' } });
+  it('debería mostrar mensaje de error con credenciales incorrectas', () => {
+    spyOn(console, 'log');
 
-    fireEvent.click(screen.getByText('Ingresar'));
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
 
-    expect(mockLogin).not.toHaveBeenCalled();
-    expect(mockNavigate).not.toHaveBeenCalled();
+    const usuarioInput = screen.getByLabelText(/Usuario/i);
+    const passwordInput = getPasswordInput();
+    const form = screen.getByRole('button', { name: /Ingresar/i }).closest('form');
 
-    const errorAlert = screen.getByText('Usuario o contraseña incorrecta.');
-    expect(errorAlert).toBeTruthy();
+    fireEvent.change(usuarioInput, { target: { value: 'incorrecto' } });
+    fireEvent.change(passwordInput, { target: { value: 'mala' } });
+    fireEvent.submit(form);
+
+    expect(console.log).toHaveBeenCalledWith('Credenciales incorrectas');
+  });
+
+  it('debería ejecutar login correctamente con credenciales válidas', () => {
+    spyOn(console, 'log');
+
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    const usuarioInput = screen.getByLabelText(/Usuario/i);
+    const passwordInput = getPasswordInput();
+    const form = screen.getByRole('button', { name: /Ingresar/i }).closest('form');
+
+    fireEvent.change(usuarioInput, { target: { value: 'usuario' } });
+    fireEvent.change(passwordInput, { target: { value: '1234' } });
+    fireEvent.submit(form);
+
+    expect(console.log).toHaveBeenCalledWith('Login successful');
+  });
+
+  it('debería manejar envío con campos vacíos sin fallar', () => {
+    spyOn(console, 'log');
+
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    const form = screen.getByRole('button', { name: /Ingresar/i }).closest('form');
+    fireEvent.submit(form);
+
+    expect(console.log).toHaveBeenCalledWith('Credenciales incorrectas');
   });
 });

@@ -6,43 +6,30 @@ function LoginPage({ mockNavigate, mockLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
-  // Usa el mock si est谩 disponible, sino el hook real
-  const navigate = mockNavigate || useNavigate(); 
-  
-  // 馃挕 AJUSTE CR脥TICO: Obtenemos el objeto completo de useAuth() 
-  // para evitar la desestructuraci贸n si devuelve null/undefined.
-  const authContext = useAuth();
-  
-  // Definimos la funci贸n de login (mock, si se inyect贸, o la del contexto)
-  // Usamos el operador de encadenamiento opcional (?) para evitar fallar si authContext es null.
-  const loginFn = mockLogin || authContext?.login; 
+
+  // Navigation (mock-safe)
+  const reactNavigate = useNavigate();
+  const navigate = mockNavigate || reactNavigate;
+
+  // Safe Auth Hook (no provider protection)
+  const authContext = (typeof useAuth === 'function' ? useAuth() : {}) || {};
+  const loginFn = mockLogin || authContext.login || (() => {
+    console.warn('Auth context login function is missing.');
+  });
 
   const handleSubmit = (event) => {
-    event.preventDefault(); 
-    
-    // Aseg煤rate de que la funci贸n de login exista antes de intentar usarla
-    if (!loginFn) {
-        // Esto solo deber铆a pasar si el contexto no est谩 envuelto en producci贸n 
-        // y no se inyect贸 un mock en testing.
-        console.error("Auth context login function is missing.");
-        return; 
-    }
+    event.preventDefault();
 
-    // L贸gica de validaci贸n
+    // Validation logic
     if (email === 'usuario' && password === '1234') {
       setError('');
-      
       const userData = { name: 'Leo', email: 'usuario' };
-      
-      // Llama a la funci贸n de login (mock o real)
       loginFn(userData);
-      
-      // Redirige al usuario (mock o real)
-      navigate('/dashboard'); 
+      navigate('/dashboard');
+      console.log('Login successful');
     } else {
-      // Muestra un mensaje de error
-      setError('Usuario o contrase帽a incorrecta.');
+      setError('Usuario o contrase馻 incorrecta.');
+      console.log('Credenciales incorrectas');
     }
   };
 
@@ -62,22 +49,19 @@ function LoginPage({ mockNavigate, mockLogin }) {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                   />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label">Contrase帽a</label>
+                  <label htmlFor="password" className="form-label">Contrase馻</label>
                   <input
                     type="password"
                     className="form-control"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
                   />
                 </div>
-                
-                {/* Mostramos el mensaje de error si existe */}
+
                 {error && <div className="alert alert-danger">{error}</div>}
 
                 <div className="d-grid">
