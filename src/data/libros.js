@@ -5,12 +5,12 @@ export const libros = [
   { id: 2, titulo: '1984', autor: 'George Orwell', genero: 'Distopía', categoria: 'ficcion', imagenUrl: '/imagen/Diapositiva1-34-e1593899389735.jpg' },
   
   // No Ficción
-  { id: 3, titulo: 'Sapiens: De animales a dioses', autor: 'Yuval Noah Harari', genero: 'Historia', categoria: 'no-ficcion', imagenUrl: '/imagen/8571a0be08f051d5befeb4676fcf15f9.webp' },
+  { id: 3, titulo: 'Sapiens: De animales a dioses', autor: 'Yuval Noah Harari', genero: 'Historia', categoria: 'no-ficcion', imagenUrl: '/imagen/8571a0be08f051d5befeb4676fcf15f9.webp?v=2' },
   { id: 4, titulo: 'El diario de Ana Frank', autor: 'Ana Frank', genero: 'Biografía', categoria: 'no-ficcion', imagenUrl: '/imagen/978848365337.gif' },
 
   // Ciencia y Tecnología
-  { id: 5, titulo: 'Cosmos', autor: 'Carl Sagan', genero: 'Astronomía, Ciencia', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/661a3760157941a94cb8db3f5a9d5060.webp' },
-  { id: 6, titulo: 'Clean Code', autor: 'Robert C. Martin', genero: 'Programación', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/aabc3a10f47e5d37cde9f3bc9bdf2667.webp' },
+  { id: 5, titulo: 'Cosmos', autor: 'Carl Sagan', genero: 'Astronomía, Ciencia', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/661a3760157941a94cb8db3f5a9d5060.webp?v=2' },
+  { id: 6, titulo: 'Clean Code', autor: 'Robert C. Martin', genero: 'Programación', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/aabc3a10f47e5d37cde9f3bc9bdf2667.webp?v=2' },
 
   // Infantil y Juvenil
   { id: 7, titulo: 'El Principito', autor: 'Antoine de Saint-Exupéry', genero: 'Fábula', categoria: 'infantil-juvenil', imagenUrl: '/imagen/02fb19970ccf22763313a73744bfdaf7.webp' },

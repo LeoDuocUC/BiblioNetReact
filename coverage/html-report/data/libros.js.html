@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/Navbar.js</title>
+    <title>Code coverage report for data/libros.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">components</a> Navbar.js</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">data</a> libros.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -39,7 +39,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
@@ -89,32 +89,8 @@
 <a name='L24'></a><a href='#L24'>24</a>
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
-<a name='L27'></a><a href='#L27'>27</a>
-<a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a>
-<a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a>
-<a name='L35'></a><a href='#L35'>35</a>
-<a name='L36'></a><a href='#L36'>36</a>
-<a name='L37'></a><a href='#L37'>37</a>
-<a name='L38'></a><a href='#L38'>38</a>
-<a name='L39'></a><a href='#L39'>39</a>
-<a name='L40'></a><a href='#L40'>40</a>
-<a name='L41'></a><a href='#L41'>41</a>
-<a name='L42'></a><a href='#L42'>42</a>
-<a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<a name='L27'></a><a href='#L27'>27</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -139,60 +115,33 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/components/Navbar.js
-import React from 'react';
-// RENAME THE IMPORTED 'Navbar'
-import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container } from 'react-bootstrap';
-import { NavLink } from 'react-router-dom';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// Esta es la base de datos completa con todos los libros y categorías correctas.
+export const libros = [
+  // Ficción
+  { id: 1, titulo: 'Cien años de soledad', autor: 'Gabriel García Márquez', genero: 'Realismo Mágico', categoria: 'ficcion', imagenUrl: '/imagen/3812f54c9c10992f538ead2c95d775ed.webp' },
+  { id: 2, titulo: '1984', autor: 'George Orwell', genero: 'Distopía', categoria: 'ficcion', imagenUrl: '/imagen/Diapositiva1-34-e1593899389735.jpg' },
+  
+  // No Ficción
+  { id: 3, titulo: 'Sapiens: De animales a dioses', autor: 'Yuval Noah Harari', genero: 'Historia', categoria: 'no-ficcion', imagenUrl: '/imagen/8571a0be08f051d5befeb4676fcf15f9.webp?v=2' },
+  { id: 4, titulo: 'El diario de Ana Frank', autor: 'Ana Frank', genero: 'Biografía', categoria: 'no-ficcion', imagenUrl: '/imagen/978848365337.gif' },
 &nbsp;
-// Keep your function name the same, as App.js expects it
-export default function Navbar() { 
-  return (
-    // Use the new name 'BootstrapNavbar'
-    &lt;BootstrapNavbar collapseOnSelect expand="lg" bg="light" variant="light" className="shadow-sm main-navbar"&gt;
-      &lt;Container&gt;
-        {/* Mobile hamburger menu button */}
-        &lt;BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" /&gt;
-        
-        {/* Collapsible content */}
-        &lt;BootstrapNavbar.Collapse id="responsive-navbar-nav"&gt;
-          &lt;Nav className="me-auto"&gt;
-            
-            {/* "Inicio" link */}
-            &lt;Nav.Link as={NavLink} to="/" end&gt;
-              Inicio
-            &lt;/Nav.Link&gt;
+  // Ciencia y Tecnología
+  { id: 5, titulo: 'Cosmos', autor: 'Carl Sagan', genero: 'Astronomía, Ciencia', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/661a3760157941a94cb8db3f5a9d5060.webp?v=2' },
+  { id: 6, titulo: 'Clean Code', autor: 'Robert C. Martin', genero: 'Programación', categoria: 'ciencia-tecnologia', imagenUrl: '/imagen/aabc3a10f47e5d37cde9f3bc9bdf2667.webp?v=2' },
 &nbsp;
-            {/* "Categorías" Dropdown */}
-            &lt;NavDropdown title="Categorías" id="collasible-nav-dropdown"&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/ficcion"&gt;Ficción&lt;/NavDropdown.Item&gt;
-              {/* --- THIS LINE IS NOW FIXED --- */}
-              &lt;NavDropdown.Item as={NavLink} to="/no-ficcion"&gt;No Ficción&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/ciencia-tecnologia"&gt;Ciencia y Tecnología&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/arte-cultura"&gt;Arte y Cultura&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/negocios-economia"&gt;Negocios y Economía&lt;/NavDropdown.Item&gt;
-            &lt;/NavDropdown&gt;
+  // Infantil y Juvenil
+  { id: 7, titulo: 'El Principito', autor: 'Antoine de Saint-Exupéry', genero: 'Fábula', categoria: 'infantil-juvenil', imagenUrl: '/imagen/02fb19970ccf22763313a73744bfdaf7.webp' },
+  { id: 8, titulo: 'Matilda', autor: 'Roald Dahl', genero: 'Infantil', categoria: 'infantil-juvenil', imagenUrl: '/imagen/978842041710.gif' },
 &nbsp;
-            {/* Other main links */}
-            &lt;Nav.Link as={NavLink} to="/libros"&gt;Libros&lt;/Nav.Link&gt;
-            &lt;Nav.Link as={NavLink} to="/infantil-juvenil"&gt;Infantil y Juvenil&lt;/Nav.Link&gt;
-            
-          &lt;/Nav&gt;
-        &lt;/BootstrapNavbar.Collapse&gt;
-      &lt;/Container&gt;
-    &lt;/BootstrapNavbar&gt; 
-  );
-}</pre></td></tr></table></pre>
+  // Arte y Cultura (CORREGIDOS)
+  { id: 9, titulo: 'La historia del arte', autor: 'E.H. Gombrich', genero: 'Historia', categoria: 'arte-cultura', imagenUrl: '/imagen/Historia del Arte.webp' },
+  { id: 10, titulo: 'El arte de la guerra', autor: 'Sun Tzu', genero: 'Filosofía', categoria: 'arte-cultura', imagenUrl: '/imagen/El arte de la guerra.jpg' },
+&nbsp;
+  // Negocios y Economía (¡CORREGIDOS!)
+  { id: 11, titulo: 'Padre Rico, Padre Pobre', autor: 'Robert T. Kiyosaki', genero: 'Finanzas', categoria: 'negocios-economia', imagenUrl: '/imagen/padre-rico-padre-pobre-libro.jpg' }, // &lt;-- CAMBIO AQUÍ
+  { id: 12, titulo: 'Piense y hágase rico', autor: 'Napoleon Hill', genero: 'Autoayuda', categoria: 'negocios-economia', imagenUrl: '/imagen/Piense y Hagase Rico.webp' }, // &lt;-- CAMBIO AQUÍ
+];
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

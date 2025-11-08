@@ -1,58 +1,84 @@
-// Archivo: CartContext.js
-
-import React, { createContext, useContext, useState } from 'react';
-import { useAuth } from './AuthContext'; // <-- 1. IMPORTAR useAuth
+// Archivo: src/context/CartContext.js
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useAuth } from './AuthContext';
 
 export const CartContext = createContext();
+export const MAX_ITEMS = 5;
 
 export const CartProvider = ({ children }) => {
-  const MAX_ITEMS = 5;
-  const [cartItems, setCartItems] = useState([]);
-  
-  // 2. OBTENER LA FUNCIÓN DEL AUTHCONTEXT
-  // (Asegúrate de que AuthProvider esté "envolviendo" a CartProvider en App.js para que esto funcione)
-  const { addBooksToLoan } = useAuth(); 
+  // Hidratación SÍNCRONA: lee localStorage en el primer render
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const raw = localStorage.getItem('cartItems');
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // Para enviar los libros al panel del usuario cuando se confirma
+  const { addBooksToLoan } = useAuth();
+
+  // Persiste el carrito y un contador rápido
+  useEffect(() => {
+    try {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      localStorage.setItem('cartCount', String(cartItems.length));
+    } catch {
+      // no-op
+    }
+  }, [cartItems]);
+
+  const isLimitReached = cartItems.length >= MAX_ITEMS;
 
   const addToCart = (libro) => {
-    setCartItems(prev => {
-      if (prev.length >= MAX_ITEMS) {
-        console.warn(`No puedes solicitar más de ${MAX_ITEMS} libros.`);
-        return prev; // no agregar
-      }
-      if (prev.find(item => item.id === libro.id)) {
-        console.warn(`${libro.titulo} ya está en tu carrito.`);
-        return prev; // no agregar repetido
-      }
+    setCartItems((prev) => {
+      // No duplicados
+      if (prev.some((b) => b.id === libro.id)) return prev;
+      // Respeta el límite
+      if (prev.length >= MAX_ITEMS) return prev;
       return [...prev, libro];
     });
   };
 
   const removeFromCart = (libroId) => {
-    setCartItems(prev => prev.filter(item => item.id !== libroId));
+    setCartItems((prev) => prev.filter((b) => b.id !== libroId));
   };
+
+  const clearCart = () => setCartItems([]);
 
   const placeOrder = () => {
-    if (cartItems.length === 0) {
-      console.warn('El carrito está vacío.');
-      return;
-    }
-
-    // --- ¡AQUÍ ESTÁ EL ARREGLO! ---
-    // 3. Antes de limpiar el carrito, pasamos los libros al AuthContext.
+    if (cartItems.length === 0) return;
+    // Pasa los libros al AuthContext (tu panel del usuario)
     addBooksToLoan(cartItems);
-    // -----------------------------
-
-    console.log('¡Tu solicitud ha sido procesada! Los libros ahora aparecen en tu panel de usuario.');
-    
-    // Ahora sí limpiamos el carrito, después de haberlos "enviado"
-    setCartItems([]); 
+    // Limpia carrito
+    setCartItems([]);
   };
 
-  return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, placeOrder, MAX_ITEMS }}>
-      {children}
-    </CartContext.Provider>
+  const value = useMemo(
+    () => ({
+      cartItems,
+      addToCart,
+      removeFromCart,
+      clearCart,
+      placeOrder,
+      isLimitReached,
+      MAX_ITEMS,
+    }),
+    [cartItems, isLimitReached]
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error('useCart must be used within a CartProvider');
+  return ctx;
+};
