@@ -106,7 +106,19 @@
 <a name='L41'></a><a href='#L41'>41</a>
 <a name='L42'></a><a href='#L42'>42</a>
 <a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L44'></a><a href='#L44'>44</a>
+<a name='L45'></a><a href='#L45'>45</a>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -114,7 +126,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -151,41 +163,47 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/components/Navbar.js
 import React from 'react';
-// RENAME THE IMPORTED 'Navbar'
-import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 &nbsp;
-// Keep your function name the same, as App.js expects it
 export default function Navbar() { 
   return (
-    // Use the new name 'BootstrapNavbar'
     &lt;BootstrapNavbar collapseOnSelect expand="lg" bg="light" variant="light" className="shadow-sm main-navbar"&gt;
+      {/* 1. Reverted back to regular 'Container' */}
       &lt;Container&gt;
-        {/* Mobile hamburger menu button */}
         &lt;BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" /&gt;
         
-        {/* Collapsible content */}
         &lt;BootstrapNavbar.Collapse id="responsive-navbar-nav"&gt;
+          {/* 2. Reverted back to 'me-auto' to align links left */}
           &lt;Nav className="me-auto"&gt;
             
-            {/* "Inicio" link */}
-            &lt;Nav.Link as={NavLink} to="/" end&gt;
+            &lt;Nav.Link as={NavLink} to="/" end className="nav-link-custom"&gt;
               Inicio
             &lt;/Nav.Link&gt;
 &nbsp;
-            {/* "Categorías" Dropdown */}
-            &lt;NavDropdown title="Categorías" id="collasible-nav-dropdown"&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/ficcion"&gt;Ficción&lt;/NavDropdown.Item&gt;
-              {/* --- THIS LINE IS NOW FIXED --- */}
-              &lt;NavDropdown.Item as={NavLink} to="/no-ficcion"&gt;No Ficción&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/ciencia-tecnologia"&gt;Ciencia y Tecnología&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/arte-cultura"&gt;Arte y Cultura&lt;/NavDropdown.Item&gt;
-              &lt;NavDropdown.Item as={NavLink} to="/negocios-economia"&gt;Negocios y Economía&lt;/NavDropdown.Item&gt;
-            &lt;/NavDropdown&gt;
-&nbsp;
-            {/* Other main links */}
-            &lt;Nav.Link as={NavLink} to="/libros"&gt;Libros&lt;/Nav.Link&gt;
-            &lt;Nav.Link as={NavLink} to="/infantil-juvenil"&gt;Infantil y Juvenil&lt;/Nav.Link&gt;
+            &lt;Nav.Link as={NavLink} to="/libros" className="nav-link-custom"&gt;
+              Libros
+            &lt;/Nav.Link&gt;
+            
+            &lt;Nav.Link as={NavLink} to="/infantil-juvenil" className="nav-link-custom"&gt;
+              Infantil y Juvenil
+            &lt;/Nav.Link&gt;
+            
+            &lt;Nav.Link as={NavLink} to="/ciencia-tecnologia" className="nav-link-custom"&gt;
+              Ciencia y Tecnología
+            &lt;/Nav.Link&gt;
+            
+            &lt;Nav.Link as={NavLink} to="/no-ficcion" className="nav-link-custom"&gt;
+              No Ficción
+            &lt;/Nav.Link&gt;
+            
+            &lt;Nav.Link as={NavLink} to="/negocios-economia" className="nav-link-custom"&gt;
+              Negocios y Economía
+            &lt;/Nav.Link&gt;
+            
+            &lt;Nav.Link as={NavLink} to="/arte-cultura" className="nav-link-custom"&gt;
+              Arte y Cultura
+            &lt;/Nav.Link&gt;
             
           &lt;/Nav&gt;
         &lt;/BootstrapNavbar.Collapse&gt;
@@ -199,7 +217,7 @@ export default function Navbar() {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-08T11:32:13.587Z
+                at 2025-11-11T14:16:33.947Z
             </div>
         <script src="../prettify.js"></script>
         <script>
