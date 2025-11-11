@@ -56,6 +56,15 @@ body {
 .nav-links a:hover { color: var(--color-primary); }
 .nav-separator { border: none; border-top: 1px solid #e0e0e0; margin: 0; }
 
+/* --- NUEVA CLASE PARA LINKS DE NAVBAR --- */
+.nav-link-custom {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-right: 1.5rem; /* Adds 1.5rem (approx. 24px) spacing */
+}
+/* --- FIN NUEVA CLASE --- */
+
+
 /* ================================================= */
 /* --- ESTILOS PARA MENÚ DESPLEGABLE (CORREGIDO) --- */
 /* ================================================= */

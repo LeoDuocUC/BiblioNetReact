@@ -1,40 +1,46 @@
 // src/components/Navbar.js
 import React from 'react';
-// RENAME THE IMPORTED 'Navbar'
-import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container } from 'react-bootstrap';
+import { Navbar as BootstrapNavbar, Nav, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
-// Keep your function name the same, as App.js expects it
 export default function Navbar() { 
   return (
-    // Use the new name 'BootstrapNavbar'
     <BootstrapNavbar collapseOnSelect expand="lg" bg="light" variant="light" className="shadow-sm main-navbar">
+      {/* 1. Reverted back to regular 'Container' */}
       <Container>
-        {/* Mobile hamburger menu button */}
         <BootstrapNavbar.Toggle aria-controls="responsive-navbar-nav" />
         
-        {/* Collapsible content */}
         <BootstrapNavbar.Collapse id="responsive-navbar-nav">
+          {/* 2. Reverted back to 'me-auto' to align links left */}
           <Nav className="me-auto">
             
-            {/* "Inicio" link */}
-            <Nav.Link as={NavLink} to="/" end>
+            <Nav.Link as={NavLink} to="/" end className="nav-link-custom">
               Inicio
             </Nav.Link>
 
-            {/* "Categorías" Dropdown */}
-            <NavDropdown title="Categorías" id="collasible-nav-dropdown">
-              <NavDropdown.Item as={NavLink} to="/ficcion">Ficción</NavDropdown.Item>
-              {/* --- THIS LINE IS NOW FIXED --- */}
-              <NavDropdown.Item as={NavLink} to="/no-ficcion">No Ficción</NavDropdown.Item>
-              <NavDropdown.Item as={NavLink} to="/ciencia-tecnologia">Ciencia y Tecnología</NavDropdown.Item>
-              <NavDropdown.Item as={NavLink} to="/arte-cultura">Arte y Cultura</NavDropdown.Item>
-              <NavDropdown.Item as={NavLink} to="/negocios-economia">Negocios y Economía</NavDropdown.Item>
-            </NavDropdown>
-
-            {/* Other main links */}
-            <Nav.Link as={NavLink} to="/libros">Libros</Nav.Link>
-            <Nav.Link as={NavLink} to="/infantil-juvenil">Infantil y Juvenil</Nav.Link>
+            <Nav.Link as={NavLink} to="/libros" className="nav-link-custom">
+              Libros
+            </Nav.Link>
+            
+            <Nav.Link as={NavLink} to="/infantil-juvenil" className="nav-link-custom">
+              Infantil y Juvenil
+            </Nav.Link>
+            
+            <Nav.Link as={NavLink} to="/ciencia-tecnologia" className="nav-link-custom">
+              Ciencia y Tecnología
+            </Nav.Link>
+            
+            <Nav.Link as={NavLink} to="/no-ficcion" className="nav-link-custom">
+              No Ficción
+            </Nav.Link>
+            
+            <Nav.Link as={NavLink} to="/negocios-economia" className="nav-link-custom">
+              Negocios y Economía
+            </Nav.Link>
+            
+            <Nav.Link as={NavLink} to="/arte-cultura" className="nav-link-custom">
+              Arte y Cultura
+            </Nav.Link>
             
           </Nav>
         </BootstrapNavbar.Collapse>
